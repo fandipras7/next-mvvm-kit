@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Project Next.js 14 dengan Zustand, React Query (TanStack), dan ShadCN
 
-## Getting Started
+## 📌 Pendahuluan
+Proyek ini menggunakan **Next.js 14** sebagai kerangka kerja utama, dengan **Zustand** untuk manajemen state, **React Query (TanStack)** untuk pengelolaan data asinkron, dan **ShadCN** untuk komponen UI yang modern dan fleksibel.
 
-First, run the development server:
+## 🛠️ Teknologi yang Digunakan
+- [Next.js 14](https://nextjs.org/) - Framework React untuk aplikasi web modern.
+- [Zustand](https://zustand-demo.pmnd.rs/) - Manajemen state yang ringan dan fleksibel.
+- [React Query (TanStack)](https://tanstack.com/query/latest) - Manajemen data server-side yang efisien.
+- [ShadCN](https://ui.shadcn.com/) - Komponen UI berbasis Radix dan Tailwind CSS.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Instalasi
+Pastikan Anda sudah menginstal **Node.js** dan **pnpm/npm/yarn** sebelum memulai.
+
+1. Clone repositori ini:
+   ```sh
+   git clone https://github.com/username/repository.git
+   cd repository
+   ```
+
+2. Install dependensi:
+   ```sh
+   pnpm install  # atau npm install / yarn install
+   ```
+
+3. Jalankan proyek dalam mode pengembangan:
+   ```sh
+   pnpm dev  # atau npm run dev / yarn dev
+   ```
+
+4. Buka browser dan akses **http://localhost:3000**.
+
+## 🏗️ Penggunaan
+### Manajemen State dengan Zustand
+Buat file di `store/useExampleStore.ts`:
+```ts
+import { create } from 'zustand';
+
+type ExampleState = {
+  count: number;
+  increment: () => void;
+};
+
+export const useExampleStore = create<ExampleState>((set) => ({
+  count: 0,
+  increment: () => set((state) => ({ count: state.count + 1 })),
+}));
+```
+Penggunaan dalam komponen:
+```tsx
+import { useExampleStore } from '@/store/useExampleStore';
+
+export default function Counter() {
+  const { count, increment } = useExampleStore();
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={increment} className="btn">Tambah</button>
+    </div>
+  );
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Fetching Data dengan React Query (TanStack)
+Buat file di `lib/api.ts`:
+```ts
+export const fetchData = async () => {
+  const res = await fetch('https://jsonplaceholder.typicode.com/posts');
+  if (!res.ok) throw new Error('Gagal mengambil data');
+  return res.json();
+};
+```
+Penggunaan dalam komponen:
+```tsx
+import { useQuery } from '@tanstack/react-query';
+import { fetchData } from '@/lib/api';
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+export default function DataList() {
+  const { data, error, isLoading } = useQuery({ queryKey: ['posts'], queryFn: fetchData });
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
-## Learn More
+  return (
+    <ul>
+      {data.map((post) => (
+        <li key={post.id}>{post.title}</li>
+      ))}
+    </ul>
+  );
+}
+```
 
-To learn more about Next.js, take a look at the following resources:
+### Menggunakan Komponen UI dari ShadCN
+Pastikan telah menginstal ShadCN:
+```sh
+pnpm dlx shadcn-ui@latest init
+```
+Contoh penggunaan tombol:
+```tsx
+import { Button } from '@/components/ui/button';
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+export default function ExampleButton() {
+  return <Button variant="outline">Klik Saya</Button>;
+}
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ✅ TODO
+- [x] Setup Next.js 14
+- [x] Integrasi Zustand untuk state management
+- [x] Implementasi React Query (TanStack) untuk fetching data
+- [x] Konfigurasi ShadCN untuk komponen UI
+- [ ] Tambahkan autentikasi dengan NextAuth
+- [ ] Implementasi dark mode
 
-## Deploy on Vercel
+## 📜 Lisensi
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Selamat ngoding! 🚀
+
